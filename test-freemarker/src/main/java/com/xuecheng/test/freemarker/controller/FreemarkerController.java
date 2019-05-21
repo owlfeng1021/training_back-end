@@ -14,7 +14,7 @@ import java.util.*;
  * @version 1.0
  * @create 2018-06-12 18:40
  **/
-@RequestMapping("/freemarker")
+//@RequestMapping("/freemarker")
 @Controller
 public class FreemarkerController {
     @Autowired
@@ -22,10 +22,9 @@ public class FreemarkerController {
 
     @RequestMapping("/banner")
     public String index_banner(Map<String, Object> map){
-        String dataUrl = "http://localhost:31001/cms/config/getmodel/5ce36935f09c2f114c9f47fb";
-        ResponseEntity<Map> forEntity = restTemplate.getForEntity(dataUrl, Map.class);
+        ResponseEntity<Map> forEntity = restTemplate.getForEntity("http://localhost:31001/cms/config/getmodel/5a791725dd573c3574ee333f", Map.class);
         Map body = forEntity.getBody();
-        map.put("model",body);
+        map.putAll(body);
         return "index_banner";
     }
     @RequestMapping("/test1")

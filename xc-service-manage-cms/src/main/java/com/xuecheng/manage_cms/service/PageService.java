@@ -13,12 +13,16 @@ import com.xuecheng.framework.model.response.QueryResult;
 import com.xuecheng.framework.model.response.ResponseResult;
 import com.xuecheng.manage_cms.dao.CmsConfigRepository;
 import com.xuecheng.manage_cms.dao.CmsPageRepository;
+import com.xuecheng.manage_cms.dao.CmsTemplateRepository;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -34,6 +38,10 @@ public class PageService {
 
     @Autowired
     CmsConfigRepository cmsConfigRepository;
+    @Autowired
+    RestTemplate restTemplate;
+    @Autowired
+    CmsTemplateRepository cmsTemplateRepository;
 
     /**
      * 页面查询方法
@@ -123,6 +131,8 @@ public class PageService {
             one.setPageWebPath(cmsPage.getPageWebPath());
             //更新物理路径
             one.setPagePhysicalPath(cmsPage.getPagePhysicalPath());
+            // 更新 dataurl
+            one.setDataUrl(cmsPage.getDataUrl());
             cmsPageRepository.save(one);
 
             return new CmsPageResult(CommonCode.SUCCESS, one);
@@ -144,6 +154,34 @@ public class PageService {
     }
     public CmsConfig getConfigById(String id){
         return  cmsConfigRepository.findById(id).get();
+
+    }
+    /**
+     * 页面静态化方法
+     */
+    public String getPageHtml(String pageId){
+        Map modelByPageId = getModelByPageId(pageId);
+        if (modelByPageId==null){
+            ExceptionCast.cast(CmsCode.CMS_GENERATEHTML_DATAURLISNULL);
+        }
+
+    }
+
+    // 获取数据模型
+    private Map getModelByPageId(String pageId){
+        if (StringUtils.isEmpty(pageId)){
+            ExceptionCast.cast(CmsCode.CMS_PAGE_NOTEXISTS);
+        }
+        CmsPage byId = this.getById(pageId);
+        String dataUrl =byId.getDataUrl();
+        if (StringUtils.isEmpty(dataUrl)){
+            //页面的dataurl为空
+            ExceptionCast.cast(CmsCode.CMS_COURSE_PERVIEWISNULL);
+        }
+        ResponseEntity<Map> forEntity = restTemplate.getForEntity(dataUrl, Map.class);
+        Map body = forEntity.getBody();
+        return  body;
+        
 
     }
 

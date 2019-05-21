@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link rel="stylesheet" href="http://www.xuecheng.com/plugins/normalize-css/normalize.css" />
-    <link rel="stylesheet" href="http://www.xuecheng.com/plugins/bootstrap/dist/css/bootstrap.css" />
-    <link rel="stylesheet" href="http://www.xuecheng.com/css/page-learing-index.css" />
-    <link rel="stylesheet" href="http://www.xuecheng.com/css/page-header.css" />
+    <link rel="stylesheet" href="http://localhost/plugins/normalize-css/normalize.css" />
+    <link rel="stylesheet" href="http://localhost/plugins/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="http://localhost/css/page-learing-index.css" />
+    <link rel="stylesheet" href="http://localhost/css/page-header.css" />
 </head>
 <body>
 <div class="banner-roll">
@@ -24,8 +24,8 @@
     </div>
     <div class="indicators"></div>
 </div>
-<script type="text/javascript" src="http://www.xuecheng.com/plugins/jquery/dist/jquery.js"></script>
-<script type="text/javascript" src="http://www.xuecheng.com/plugins/bootstrap/dist/js/bootstrap.js"></script>
+<script type="text/javascript" src="http://localhost/plugins/jquery/dist/jquery.js"></script>
+<script type="text/javascript" src="http://localhost/plugins/bootstrap/dist/js/bootstrap.js"></script>
 <script type="text/javascript">
     var tg = $('.banner-item .item');
     var num = 0;
