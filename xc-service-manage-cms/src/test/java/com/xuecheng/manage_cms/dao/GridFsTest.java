@@ -30,10 +30,10 @@ public class GridFsTest {
     GridFSBucket gridFSBucket;
     @Test
     public void testStore() throws FileNotFoundException{
-        File file=new File("d:/index_banner.ftl");
+        File file=new File("d:/imooc/学成在线/day04 页面静态化/代码/index_banner.ftl");
         FileInputStream fileInputStream=new FileInputStream(file);
         ObjectId store = gridFsTemplate.store(fileInputStream, "index_banner.ftl");
-        System.out.println(store);
+        System.out.println(store);//5ce4e744f09c2f39287d1ab7
     }
     @Test
     public void queryFile() throws IOException {
@@ -44,7 +44,7 @@ public class GridFsTest {
         // 创建gridfsresource
         GridFsResource gridFsResource = new GridFsResource(id, gridFSDownloadStream);
 
-        IOUtils.toString(gridFsResource.getInputStream(), "utf-8")
+        IOUtils.toString(gridFsResource.getInputStream(), "utf-8");
 
 
     }

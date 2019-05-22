@@ -14,6 +14,10 @@
         <module>../xc-framework-model</module>
         <module>../xc-framework-utils</module>
         <module>../xc-service-api</module>
+        <module>../testrabbitmqconsumer</module>
+        <module>../testrabbitmqproducer</module>
+        <module>../test-freemarker</module>
+
     </modules>
     <groupId>com.xuecheng</groupId>
     <artifactId>xc-framework-parent</artifactId>
