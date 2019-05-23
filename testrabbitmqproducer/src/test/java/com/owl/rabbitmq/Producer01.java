@@ -1,4 +1,4 @@
-package com.owl.test.rabbitmq;
+package com.owl.rabbitmq;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;

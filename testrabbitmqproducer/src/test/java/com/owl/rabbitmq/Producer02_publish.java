@@ -1,4 +1,4 @@
-package com.owl.test.rabbitmq;
+package com.owl.rabbitmq;
 
 import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
@@ -8,13 +8,11 @@ import com.rabbitmq.client.ConnectionFactory;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
-public class Producer03_routing {
+public class Producer02_publish {
     // 声名一个队列
     private static final String QUEUE_INFORM_EMAIL = "queue_inform_email";
     private static final String QUEUE_INFORM_SMS = "queue_inform_sms";
-    private static final String EXCHANGE_ROUTING_INFORM = "exchange_routing_inform";
-    private static final String ROUTINGKEY_EMALL = "infrom_email";
-    private static final String ROUTINGKEY_SMS = "infrom_sms";
+    private static final String EXCHANGE_FANOUT_INFORM = "exchange_fanout_inform";
 
     public static void main(String[] args) {
         // 连接工厂
@@ -52,7 +50,7 @@ public class Producer03_routing {
              *  topic ：对应的topics的工作模式
              *  headers： 对应 headers 工作模式
              */
-            channel.exchangeDeclare(EXCHANGE_ROUTING_INFORM, BuiltinExchangeType.DIRECT);
+            channel.exchangeDeclare(EXCHANGE_FANOUT_INFORM, BuiltinExchangeType.FANOUT);
             // 进行交换机的绑定 和队列的绑定
             /**
              * 参数明细
@@ -60,44 +58,21 @@ public class Producer03_routing {
              * 2 exchange 交换机名称
              * 3 routingKey 路由key 作用是交换机根据路由key的值将消息转发到指定的队列中 ,在发布订阅模式中协调为空字符串
              */
-            channel.queueBind(QUEUE_INFORM_EMAIL, EXCHANGE_ROUTING_INFORM, ROUTINGKEY_EMALL);
-            channel.queueBind(QUEUE_INFORM_EMAIL, EXCHANGE_ROUTING_INFORM, "infrom");
+            channel.queueBind(QUEUE_INFORM_EMAIL,EXCHANGE_FANOUT_INFORM,"");
+            channel.queueBind(QUEUE_INFORM_SMS,EXCHANGE_FANOUT_INFORM,"");
 
-            channel.queueBind(QUEUE_INFORM_SMS, EXCHANGE_ROUTING_INFORM, ROUTINGKEY_SMS);
-            channel.queueBind(QUEUE_INFORM_SMS, EXCHANGE_ROUTING_INFORM, "infrom");
             /**
              * 1 exchange 交换机 如果不指定就使用默认交换机 使用空字符串
              * 2 routingkey 路由key 交换机根据路由的key来讲消息转发到指定的队列 如果使用默认的交换机 routingkey 设置为队列的名称
              * 3 props 消息的属性d
              * 4 body 消息的内容
              */
-            /**
-             *  这里测试routingKey 的绑定功能
-             */
-//            for (int i= 0 ;i<5 ;i++){
-//                // 之前发消息的时候是不需要指定routingkey
-//                // 但是现在使用的是 routing模式 所以需要指定routingkey
-//                String message = "send email messages to user";
-//                channel.basicPublish(EXCHANGE_ROUTING_INFORM, ROUTINGKEY_EMALL, null, message.getBytes());
-//                System.out.println("send to mq" + message);
-//            }
-//            for (int i= 0 ;i<5 ;i++){
-//                // 之前发消息的时候是不需要指定routingkey
-//                // 但是现在使用的是 routing模式 所以需要指定routingkey
-//                String message = "send sms messages to user";
-//                channel.basicPublish(EXCHANGE_ROUTING_INFORM, ROUTINGKEY_SMS, null, message.getBytes());
-//                System.out.println("send to mq" + message);
-//            }
-            /**
-             *   这里测试 关于routingKey 能不能多重指向
-             */
-            for (int i = 0; i < 5; i++) {
-                // 之前发消息的时候是不需要指定routingkey
-                // 但是现在使用的是 routing模式 所以需要指定routingkey
-                String message = "send sms messages to user";
-                channel.basicPublish(EXCHANGE_ROUTING_INFORM, "infrom", null, message.getBytes());
+            for (int i= 0 ;i<5 ;i++){
+                String message = "send inform messages to user";
+                channel.basicPublish(EXCHANGE_FANOUT_INFORM, "", null, message.getBytes());
                 System.out.println("send to mq" + message);
             }
+
             // 会话通道 生产者
         } catch (IOException e) {
             e.printStackTrace();
