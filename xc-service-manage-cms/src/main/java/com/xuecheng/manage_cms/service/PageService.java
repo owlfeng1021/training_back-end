@@ -1,12 +1,12 @@
 package com.xuecheng.manage_cms.service;
 
+import com.alibaba.fastjson.JSON;
 import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.GridFSDownloadStream;
 import com.mongodb.client.gridfs.model.GridFSFile;
-import com.sun.org.apache.bcel.internal.generic.NEW;
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import com.xuecheng.framework.domain.cms.CmsConfig;
 import com.xuecheng.framework.domain.cms.CmsPage;
-import com.xuecheng.framework.domain.cms.CmsSite;
 import com.xuecheng.framework.domain.cms.CmsTemplate;
 import com.xuecheng.framework.domain.cms.request.QueryPageRequest;
 import com.xuecheng.framework.domain.cms.response.CmsCode;
@@ -16,17 +16,17 @@ import com.xuecheng.framework.model.response.CommonCode;
 import com.xuecheng.framework.model.response.QueryResponseResult;
 import com.xuecheng.framework.model.response.QueryResult;
 import com.xuecheng.framework.model.response.ResponseResult;
+import com.xuecheng.manage_cms.config.RabbitmqConfig;
 import com.xuecheng.manage_cms.dao.CmsConfigRepository;
 import com.xuecheng.manage_cms.dao.CmsPageRepository;
 import com.xuecheng.manage_cms.dao.CmsTemplateRepository;
 import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
-import freemarker.template.TemplateException;
-import io.swagger.annotations.ApiOperation;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.bouncycastle.cms.CMSCompressedData;
+import org.bson.types.ObjectId;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -39,6 +39,8 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -57,6 +59,8 @@ public class PageService {
     CmsConfigRepository cmsConfigRepository;
     @Autowired
     RestTemplate restTemplate;
+    @Autowired
+    RabbitTemplate rabbitTemplate;
     @Autowired
     CmsTemplateRepository cmsTemplateRepository;
     @Autowired
@@ -180,6 +184,57 @@ public class PageService {
     }
 
     /**
+     * 页面发布
+     */
+    public ResponseResult post(String pageId) {
+        // 执行页面静态化
+        String pageHtml = this.getPageHtml(pageId);
+        // 将页面静态化文件存储到gridFs中
+        CmsPage cmsPage = saveHtml(pageId, pageHtml);
+        // 向mq发消息
+        sendPostPage(pageId);
+        return new ResponseResult(CommonCode.SUCCESS);
+    }
+
+    // 保存html到GridFs里面
+    private CmsPage saveHtml(String pageId, String htmlContent) {
+        CmsPage cmsPage = this.getById(pageId);
+        if (cmsPage == null) {
+            ExceptionCast.cast(CommonCode.INVALID_PARAM);
+        }
+        ObjectId objectId = null;
+
+        //将htmlContent内容转成输入流水
+        try {
+            InputStream inputStream = IOUtils.toInputStream(htmlContent, "utf-8");
+            objectId = gridFsTemplate.store(inputStream, cmsPage.getPageName());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //将html文件内容保存到gridFs
+        cmsPage.setHtmlFileId(objectId.toHexString());
+        cmsPageRepository.save(cmsPage);
+        return cmsPage;
+    }
+
+    // 向mq发消息
+    private void sendPostPage(String pageId) {
+        CmsPage cmsPage = this.getById(pageId);
+        if (cmsPage == null) {
+            ExceptionCast.cast(CmsCode.CMS_PAGE_NOTEXISTS);
+        }
+        // 创建消息对象
+        HashMap<String, String> msgMap = new HashMap<>();
+        msgMap.put("pageId", pageId);
+        //消息内容
+        String msg = JSON.toJSONString(msgMap);
+        // 获取站点id作为routingKey
+        String siteId = cmsPage.getSiteId();
+        // 发布消息
+        this.rabbitTemplate.convertAndSend(RabbitmqConfig.EX_ROUTING_CMS_POSTPAGE, siteId, msg);
+    }
+
+    /**
      * 页面静态化方法
      * <p>
      * 静态化程序获取页面的dataurl
@@ -278,4 +333,5 @@ public class PageService {
         }
         return null;
     }
+
 }

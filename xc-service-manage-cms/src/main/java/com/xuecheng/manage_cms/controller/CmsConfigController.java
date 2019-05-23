@@ -2,7 +2,6 @@ package com.xuecheng.manage_cms.controller;
 
 import com.xuecheng.api.cms.CmsConfigControllerApi;
 import com.xuecheng.framework.domain.cms.CmsConfig;
-import com.xuecheng.framework.domain.cms.CmsPage;
 import com.xuecheng.manage_cms.service.PageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

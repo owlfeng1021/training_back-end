@@ -1,4 +1,4 @@
-package com.xuecheng.manage_cms.dao;
+package com.xuecheng.manage_cms_client.dao;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
