@@ -231,7 +231,9 @@ public class PageService {
         // 获取站点id作为routingKey
         String siteId = cmsPage.getSiteId();
         // 发布消息
-        this.rabbitTemplate.convertAndSend(RabbitmqConfig.EX_ROUTING_CMS_POSTPAGE, siteId, msg);
+        if ("5a751fab6abb5044e0d19ea1".equals(siteId)){
+            this.rabbitTemplate.convertAndSend(RabbitmqConfig.EX_ROUTING_CMS_POSTPAGE, siteId, msg);
+        }
     }
 
     /**

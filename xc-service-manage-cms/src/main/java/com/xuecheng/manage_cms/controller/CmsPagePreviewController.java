@@ -1,5 +1,6 @@
 package com.xuecheng.manage_cms.controller;
 
+import com.xuecheng.api.cms.CmsPageControllerApi;
 import com.xuecheng.framework.web.BaseController;
 import com.xuecheng.manage_cms.service.PageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,7 @@ import javax.servlet.ServletOutputStream;
 import java.io.IOException;
 
 @Controller
-public class CmsPagePreviewController extends BaseController {
+public class CmsPagePreviewController extends BaseController   {
     @Autowired
     PageService pageService;
 
