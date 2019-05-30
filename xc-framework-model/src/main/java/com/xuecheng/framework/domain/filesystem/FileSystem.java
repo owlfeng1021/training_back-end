@@ -35,7 +35,7 @@ public class FileSystem {
     private String businesskey;
     //业务标签
     private String filetag;
-    //文件元信息
+    //文件元信息 文件的原本信息
     private Map metadata;
 
 }

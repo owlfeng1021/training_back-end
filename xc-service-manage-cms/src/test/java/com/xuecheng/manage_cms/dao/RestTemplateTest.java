@@ -3,6 +3,7 @@ package com.xuecheng.manage_cms.dao;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -19,6 +20,6 @@ public class RestTemplateTest {
     public void testRestTemplate(){
         ResponseEntity<Map> forEntity = restTemplate.getForEntity("http://localhost:31001/cms/config/getmodel/5a791725dd573c3574ee333f", Map.class);
         Map body = forEntity.getBody();
-
+        System.out.println(body);
     }
 }

@@ -17,7 +17,9 @@
         <module>../testrabbitmqconsumer</module>
         <module>../testrabbitmqproducer</module>
         <module>../test-freemarker</module>
-
+        <module>../xc-service-base-filesystem</module>
+        <module>../xc-govern-center</module>
+        <module>../xc-govern-center</module>
     </modules>
     <groupId>com.xuecheng</groupId>
     <artifactId>xc-framework-parent</artifactId>

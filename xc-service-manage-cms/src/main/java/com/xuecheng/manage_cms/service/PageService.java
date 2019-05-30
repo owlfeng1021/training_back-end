@@ -300,7 +300,7 @@ public class PageService {
             // gridFs中取模板文件内容
             // 根据文件id查询文件
             // 根据文件id查询文件
-            GridFSFile id = gridFsTemplate.findOne(Query.query(Criteria.where("_id").is("5ce4e744f09c2f39287d1ab7")));//5ce4e744f09c2f39287d1ab7
+            GridFSFile id = gridFsTemplate.findOne(Query.query(Criteria.where("_id").is(cmsTemplate.getTemplateFileId())));//5ce4e744f09c2f39287d1ab7
             // 打开一个下载流对象
             GridFSDownloadStream gridFSDownloadStream = gridFSBucket.openDownloadStream(id.getObjectId());
             // 创建gridfsresource
@@ -336,4 +336,12 @@ public class PageService {
         return null;
     }
 
+    public CmsPageResult save(CmsPage cmsPage) {
+        CmsPage cmsPage1 = cmsPageRepository.findByPageNameAndSiteIdAndPageWebPath(cmsPage.getPageName(), cmsPage.getSiteId(), cmsPage.getPageWebPath());
+        if (cmsPage1!=null){
+            return this.update(cmsPage1.getPageId(),cmsPage);
+        }else {
+            return this.add(cmsPage);
+        }
+    }
 }

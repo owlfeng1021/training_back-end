@@ -6,9 +6,9 @@ spring:
 #mongo配置
   data:
     mongodb:
+      uri:  mongodb://192.168.233.128:27017
       database: xc_fs
-      uri: mongodb://root:123@127.0.0.1:27017
-#SpringMVC上传文件配置
+#SpringMVC上传文件配置 springboot配置
   servlet:
     multipart:
       #默认支持文件上传.
@@ -21,9 +21,9 @@ spring:
       max-file-size: 1MB
       # 最大支持请求大小
       max-request-size: 30MB
-xuecheng:
+owl:
   fastdfs:
     connect_timeout_in_seconds: 5
     network_timeout_in_seconds: 30
     charset: UTF-8
-    tracker_servers: 192.168.101.65:22122 #多个 trackerServer中间以逗号分隔
+    tracker_servers: 192.168.233.128:22122 #多个 trackerServer中间以逗号分隔

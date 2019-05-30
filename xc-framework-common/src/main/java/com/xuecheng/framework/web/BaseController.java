@@ -16,6 +16,11 @@ public class  BaseController {
 
     protected HttpSession session;
 
+    /**
+     *
+     * @param request
+     * @param response
+     */
     @ModelAttribute
     public void setReqAndRes(HttpServletRequest request, HttpServletResponse response) {
 

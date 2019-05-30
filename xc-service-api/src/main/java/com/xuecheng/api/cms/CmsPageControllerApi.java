@@ -10,6 +10,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Api(value="cms页面管理接口",description = "cms页面管理接口，提供页面的增、删、改、查")
 public interface CmsPageControllerApi {
@@ -36,4 +38,7 @@ public interface CmsPageControllerApi {
 
     @ApiOperation("页面发布")
     public ResponseResult post(String pageId);
+
+    @ApiOperation("页面保存")
+    public CmsPageResult save(CmsPage cmsPage );
 }
