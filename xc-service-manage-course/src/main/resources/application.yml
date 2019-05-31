@@ -36,9 +36,9 @@ ribbon:
   ConnectTimeout: 5000 #请求连接的超时时间
   ReadTimeout: 6000 #请求处理的超时时间
 course-publish:
-  siteId: 5a751fab6abb5044e0d19ea1
-  templateId: 5cef708f0ed965218070780d
-  previewUrl: http://localhost/cms/preview/
-  pageWebPath: /course/detail/
-  pagePhysicalPath: /course/detail/
-  dataUrlPre: http://localhost:31200/course/courseview/
+  siteId: 5cf0a6d80ed9652180707810  # 课程详情站点 id 5cf0a6d80ed9652180707810
+  templateId: 5cef708f0ed965218070780d # 课程详情模板 id
+  previewUrl: http://localhost/cms/preview/ # 预览的前缀
+  pageWebPath: /course/detail/ # 文件的相对路径
+  pagePhysicalPath: /course/detail/ # 文件的真实路径
+  dataUrlPre: http://localhost:31200/course/courseview/ # 课程页面预览路径

@@ -7,10 +7,12 @@ import com.mongodb.client.gridfs.model.GridFSFile;
 import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import com.xuecheng.framework.domain.cms.CmsConfig;
 import com.xuecheng.framework.domain.cms.CmsPage;
+import com.xuecheng.framework.domain.cms.CmsSite;
 import com.xuecheng.framework.domain.cms.CmsTemplate;
 import com.xuecheng.framework.domain.cms.request.QueryPageRequest;
 import com.xuecheng.framework.domain.cms.response.CmsCode;
 import com.xuecheng.framework.domain.cms.response.CmsPageResult;
+import com.xuecheng.framework.domain.cms.response.CmsPostPageResult;
 import com.xuecheng.framework.exception.ExceptionCast;
 import com.xuecheng.framework.model.response.CommonCode;
 import com.xuecheng.framework.model.response.QueryResponseResult;
@@ -19,6 +21,7 @@ import com.xuecheng.framework.model.response.ResponseResult;
 import com.xuecheng.manage_cms.config.RabbitmqConfig;
 import com.xuecheng.manage_cms.dao.CmsConfigRepository;
 import com.xuecheng.manage_cms.dao.CmsPageRepository;
+import com.xuecheng.manage_cms.dao.CmsSiteRepository;
 import com.xuecheng.manage_cms.dao.CmsTemplateRepository;
 import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
@@ -54,7 +57,8 @@ public class PageService {
 
     @Autowired
     CmsPageRepository cmsPageRepository;
-
+    @Autowired
+    CmsSiteRepository CmsSiteRepository;
     @Autowired
     CmsConfigRepository cmsConfigRepository;
     @Autowired
@@ -231,9 +235,9 @@ public class PageService {
         // 获取站点id作为routingKey
         String siteId = cmsPage.getSiteId();
         // 发布消息
-        if ("5a751fab6abb5044e0d19ea1".equals(siteId)){
+//        if ("5a751fab6abb5044e0d19ea1".equals(siteId)){
             this.rabbitTemplate.convertAndSend(RabbitmqConfig.EX_ROUTING_CMS_POSTPAGE, siteId, msg);
-        }
+//        }
     }
 
     /**
@@ -344,4 +348,33 @@ public class PageService {
             return this.add(cmsPage);
         }
     }
+    public CmsPostPageResult postPageQuick(CmsPage cmsPage){
+        // 先进行保存
+        CmsPageResult save = save(cmsPage);
+        if (!save.isSuccess()){
+            ExceptionCast.cast(CommonCode.FAIL);
+        }
+        // 得到页面id
+        CmsPage cmsPageSave = save.getCmsPage();
+        String pageId = cmsPageSave.getPageId();
+        // 进行发布
+        ResponseResult post = post(pageId);
+        if (!post.isSuccess()){
+            ExceptionCast.cast(CommonCode.FAIL);
+        }
+        // 拼接页面 url = cmsSite.siteDomain+cmsSite.siteWebPath +cmsPage.pageWebPath +cmsPage.pageName
+        String siteId = cmsPageSave.getSiteId();
+        CmsSite cmsSite = getCmsSiteById(siteId);
+        String pageUrl= cmsSite.getSiteDomain()+cmsSite.getSiteWebPath()+cmsPage.getPageWebPath()+cmsPage.getPageName();
+        return  new CmsPostPageResult(CommonCode.SUCCESS,pageUrl);
+    }
+    // 根据站点id查询站点信息
+    public CmsSite getCmsSiteById(String siteId){
+        Optional<CmsSite> siteOptional = CmsSiteRepository.findById(siteId);
+        if (siteOptional.isPresent()){
+            return siteOptional.get();
+        }
+        return  null;
+    }
+
 }
