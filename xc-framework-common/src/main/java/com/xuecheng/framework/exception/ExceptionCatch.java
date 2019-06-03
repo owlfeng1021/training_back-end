@@ -45,6 +45,7 @@ public class ExceptionCatch {
         }
     }
 
+
     static {
         // 定义异常对象 相应的数据
         builder.put(HttpMediaTypeNotSupportedException.class, CommonCode.INVALID_PARAM);
