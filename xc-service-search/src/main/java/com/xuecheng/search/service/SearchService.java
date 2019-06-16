@@ -73,6 +73,22 @@ public class SearchService {
             boolQueryBuilder.must(multiMatchQueryBuilder);
 
         }
+        // 根据分类查询
+        if (StringUtils.isNotEmpty((courseSearchParam.getMt())))
+        {
+            // 根据一级分类
+            boolQueryBuilder.filter(QueryBuilders.termQuery("mt",courseSearchParam.getMt()));
+        }
+        if (StringUtils.isNotEmpty((courseSearchParam.getSt())))
+        {
+            // 根据二级分类
+            boolQueryBuilder.filter(QueryBuilders.termQuery("st",courseSearchParam.getSt()));
+        }
+        if (StringUtils.isNotEmpty((courseSearchParam.getGrade())))
+        {
+            // 根据难度等级
+            boolQueryBuilder.filter(QueryBuilders.termQuery("grade",courseSearchParam.getGrade()));
+        }
         // 布尔查询
         searchSourceBuilder.query(boolQueryBuilder);
         // 请求搜索
@@ -80,8 +96,6 @@ public class SearchService {
 
         SearchResponse searchResponse = null;
         try {
-
-
              searchResponse = restHighLevelClient.search(searchRequest);
         } catch (IOException e) {
             e.printStackTrace();
@@ -131,8 +145,5 @@ public class SearchService {
         return  responseResult;
 
     }
-
-
-
 }
 

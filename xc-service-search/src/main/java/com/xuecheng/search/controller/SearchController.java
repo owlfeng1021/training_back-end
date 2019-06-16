@@ -23,5 +23,6 @@ public class SearchController implements SearchControllerApi {
             @PathVariable("size") int size,
             CourseSearchParam courseSearchParam) {
         return searchService.list(page,size,courseSearchParam);
+
     }
 }
